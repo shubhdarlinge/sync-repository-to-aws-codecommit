@@ -1,5 +1,9 @@
 name: Sync Repository to AWS CodeCommit
 description: Syncs a repository to AWS CodeCommit using AWS Credentials authorized through GitHub OIDC token.
+author: Shubham Darlinge
+branding:
+  color: yellow
+  icon: activity
 
 inputs:
   role-to-assume:
