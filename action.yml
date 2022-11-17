@@ -28,5 +28,5 @@ runs:
       run: echo repository="$(echo "${{ inputs.repository }}" | sed 's/.*\///g')" >> $GITHUB_OUTPUT
       shell: bash
     - name: Sync Repository
-      run: sync-repository.sh "${{ steps.remove-owner-from-repository-name.outputs.repository }}"
+      run: ./sync-repository.sh "${{ steps.remove-owner-from-repository-name.outputs.repository }}"
       shell: bash
