@@ -1,0 +1,32 @@
+name: Sync Repository to AWS CodeCommit
+description: Syncs a repository to AWS CodeCommit using AWS Credentials authorized through GitHub OIDC token.
+
+inputs:
+  repository:
+    description: The name of repository being synced
+    required: false
+    default: ${{ github.repository }}
+  role-to-assume:
+    description: The ARN for AWS IAM Role to be assumed while making requests to AWS CodeCommit
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        repository: ${{ inputs.repository }}
+        fetch-depth: 0
+    - name: Setup AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: ${{ inputs.role-to-assume }}
+        aws-region: ap-south-1
+    - id: remove-owner-from-repository-name
+      name: Remove Owner from Repository Name
+      run: echo repository="$(echo "${{ inputs.repository }}" | sed 's/.*\///g')" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Sync Repository
+      run: sync-repository.sh "${{ steps.remove-owner-from-repository-name.outputs.repository }}"
+      shell: bash
