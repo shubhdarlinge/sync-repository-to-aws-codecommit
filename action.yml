@@ -2,13 +2,13 @@ name: Sync Repository to AWS CodeCommit
 description: Syncs a repository to AWS CodeCommit using AWS Credentials authorized through GitHub OIDC token.
 
 inputs:
+  role-to-assume:
+    description: The ARN for AWS IAM Role to be assumed while making requests to AWS CodeCommit
+    required: true
   repository:
     description: The name of repository being synced
     required: false
     default: ${{ github.repository }}
-  role-to-assume:
-    description: The ARN for AWS IAM Role to be assumed while making requests to AWS CodeCommit
-    required: true
 
 runs:
   using: composite
@@ -38,5 +38,5 @@ runs:
         fi
         clone_url="$(echo "$output_json" | python3 -c "import sys, json; print(json.load(sys.stdin)['repositoryMetadata']['cloneUrlHttp'])")"
         git remote add codecommit "$clone_url"
-        git push codecommit --mirror
+        git push codecommit --force --mirror
       shell: bash
