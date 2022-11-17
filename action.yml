@@ -23,10 +23,20 @@ runs:
       with:
         role-to-assume: ${{ inputs.role-to-assume }}
         aws-region: ap-south-1
-    - id: remove-owner-from-repository-name
-      name: Remove Owner from Repository Name
-      run: echo repository="$(echo "${{ inputs.repository }}" | sed 's/.*\///g')" >> $GITHUB_OUTPUT
-      shell: bash
     - name: Sync Repository
-      run: ./sync-repository.sh "${{ steps.remove-owner-from-repository-name.outputs.repository }}"
+      run: |
+        repository_name="$(echo "${{ inputs.repository }}" | sed 's/.*\///g')"
+        git config --global credential.helper '!aws codecommit credential-helper $@'
+        git config --global credential.UseHttpPath true
+        output_json="$(aws codecommit get-repository --repository-name "$repository_name")"
+        if [ $? -ne 0 ]; then
+          output_json="$(aws codecommit create-repository --repository-name "$repository_name")"
+        fi
+        if [ $? -ne 0 ]; then
+          echo "Could not create repository $repository_name"
+          exit 1
+        fi
+        clone_url="$(echo "$output_json" | python3 -c "import sys, json; print(json.load(sys.stdin)['repositoryMetadata']['cloneUrlHttp'])")"
+        git remote add codecommit "$clone_url"
+        git push codecommit --mirror
       shell: bash
