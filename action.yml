@@ -29,6 +29,7 @@ runs:
         aws-region: ap-south-1
     - name: Sync Repository
       run: |
+        set +x
         repository_name="$(echo "${{ inputs.repository }}" | sed 's/.*\///g')"
         git config --global credential.helper '!aws codecommit credential-helper $@'
         git config --global credential.UseHttpPath true
