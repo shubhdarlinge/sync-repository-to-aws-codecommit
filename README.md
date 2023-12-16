@@ -7,6 +7,7 @@ Syncs a repository to AWS CodeCommit using AWS Credentials authorized through Gi
 |Name|Meaning|Required?|Default Value|
 |-|-|-|-|
 |`role-to-assume`|The ARN for AWS IAM Role to be assumed while making requests to AWS CodeCommit|Yes|N/A|
+|`aws-region`|The AWS region that the CodeCommitRepository is in|No|us-east-1|
 |`repository`|The name of repository being synced|No|Context Value: `github.repository`|
 
 ## Pre-requisites
