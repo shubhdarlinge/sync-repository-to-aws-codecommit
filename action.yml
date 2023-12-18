@@ -1,6 +1,6 @@
 name: Sync Repository to AWS CodeCommit
 description: Syncs a repository to AWS CodeCommit using AWS Credentials authorized through GitHub OIDC token.
-author: Shubham Darlinge
+author: Nathan Stern
 branding:
   color: yellow
   icon: activity
@@ -13,12 +13,16 @@ inputs:
     description: The name of repository being synced
     required: false
     default: ${{ github.repository }}
+  aws-region:
+    description: The AWS region that the CodeCommitRepository is in
+    required: false
+    default: us-east-1
 
 runs:
   using: composite
   steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: ${{ inputs.repository }}
         fetch-depth: 0
@@ -26,7 +30,7 @@ runs:
       uses: aws-actions/configure-aws-credentials@v1
       with:
         role-to-assume: ${{ inputs.role-to-assume }}
-        aws-region: ap-south-1
+        aws-region: ${{ inputs.aws-region }}
     - name: Sync Repository
       run: |
         set +x
