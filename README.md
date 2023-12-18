@@ -36,7 +36,7 @@ jobs:
       contents: read
     steps:
       - name: Sync to AWS CodeCommit
-        uses: shubhdarlinge/sync-repository-to-aws-codecommit@v2
+        uses: shubhdarlinge/sync-repository-to-aws-codecommit@v4
         with:
           role-to-assume: arn:aws:iam::1234567890:role/FakeRepositorySyncRole
 ```
